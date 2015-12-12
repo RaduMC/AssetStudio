@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Unity Studio : Unity Studio is a tool for exploring, extracting and exporting assets from Unity games and apps.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Unity Studio</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/RaduMC/UnityStudio">View on GitHub</a>
+
+          <h1 id="project_title">Unity Studio</h1>
+          <h2 id="project_tagline">Unity Studio is a tool for exploring, extracting and exporting assets from Unity games and apps.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/RaduMC/UnityStudio/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/RaduMC/UnityStudio/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><strong>Unity Studio</strong> is a tool for exploring, extracting and exporting assets from Unity games and apps.</p>
+
+<p>It is the continuation of my Unity Importer script for 3ds Max, and comprises all my research and reverse engineering of Unity file formats. It has been thoroughly tested with Unity builds from most platforms, ranging from Web, PC, Linux, MacOS to Xbox360, PS3, Android and iOS, and it is currently maintained to be compatible with Unity builds from 2.5.0 up to the latest version.</p>
+
+<h4>
+<a id="current-features" class="anchor" href="#current-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Current features</h4>
+
+<ul>
+<li>Export to FBX, with complete hierarchy, transformations, materials and textures. At the moment, geometry is exported with normals UV coordinates and vertex colors, but no animation data.</li>
+<li>Extraction of assets that can be used as standalone resources:
+
+<ul>
+<li>Textures: DDS (Alpha8bpp, ARGB16bpp, RGB24bpp, ARGB32bpp, BGRA32bpp, RGB565, DXT1, DXT5, RGBA16bpp)</li>
+<li>PVR (PVRTC_RGB2, PVRTC_RGBA2, PVRTC_RGBA4, PVRTC_RGB4, ETC_RGB4)</li>
+<li>Audio clips: mp3, ogg, wav, xbox wav (including streams from .resS files)</li>
+<li>Fonts: ttf, otf</li>
+<li>Text Assets</li>
+<li>Shaders</li>
+</ul>
+</li>
+<li>Real-time preview window for the above-mentioned assets</li>
+<li>Diagnostics mode with useful tools for research</li>
+</ul>
+
+<h4>
+<a id="ui-guide" class="anchor" href="#ui-guide" aria-hidden="true"><span class="octicon octicon-link"></span></a>UI guide</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">Item</th>
+<th align="left">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">File -&gt; Load file/folder</td>
+<td align="left">Open Assetfiles and load their assets. Load file can also decompress and load bundle files straight into memory</td>
+</tr>
+<tr>
+<td align="left">File -&gt; Extract bundle/folder</td>
+<td align="left">Extract Assetfiles from bundle files compressed with lzma or l4z</td>
+</tr>
+<tr>
+<td align="left">Scene Hierarchy search box</td>
+<td align="left">Search nodes using * and ? wildcards. Press Enter to loop through results or Ctrl+Enter to select all matching nodes</td>
+</tr>
+<tr>
+<td align="left">Asset List filter box</td>
+<td align="left">Enter a keyword to filter the list of available assets; wildcards are added automatically</td>
+</tr>
+<tr>
+<td align="left">Diagnostics</td>
+<td align="left">press Ctrl+Alt+D to bring up a hidden menu and a new list</td>
+</tr>
+<tr>
+<td align="left">Bulid class structures</td>
+<td align="left">Create human-readable structures for each type of Unity asset; available only in Web builds!</td>
+</tr>
+</tbody>
+</table>
+
+<p>Other interface elements have tooltips or are self-explanatory.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Unity Studio maintained by <a href="https://github.com/RaduMC">RaduMC</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
