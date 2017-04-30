@@ -1086,18 +1086,45 @@ namespace Unity_Studio
 
                         uint[] m_BoneIndices_Unpacked = UnpackBitVector(m_BoneIndices);
 
-                        m_Skin = new List<BoneInfluence>[m_BoneIndices.m_NumItems / 4];
+                        m_Skin = new List<BoneInfluence>[m_Vertices.Length / 3];
+
+                        int pos = 0;
                         for (int s = 0; s < m_Skin.Length; s++)
                         {
                             m_Skin[s] = new List<BoneInfluence>();
-                            for (int i = 0; i < 4; i++)
+
+                            m_Skin[s].Add(new BoneInfluence() { weight = 0, boneIndex = 0 });
+                            m_Skin[s].Add(new BoneInfluence() { weight = 0, boneIndex = 0 });
+                            m_Skin[s].Add(new BoneInfluence() { weight = 0, boneIndex = 0 });
+                            m_Skin[s].Add(new BoneInfluence() { weight = 0, boneIndex = 0 });
+
+                            int weightLevel = 0;
+                            int count = 0;
+
+                            while (weightLevel < bitmax)
                             {
-                                m_Skin[s].Add(new BoneInfluence()
+                                if (pos + count > m_Weights_Unpacked.Length) break;
+
+                                var weight = m_Weights_Unpacked[pos];
+                                m_Skin[s][count] = new BoneInfluence()
                                 {
-                                    weight = (float)((double)m_Weights_Unpacked[s * 4 + i] / bitmax),
-                                    boneIndex = (int)m_BoneIndices_Unpacked[s * 4 + i]
-                                });
+                                    weight = (float)((double)weight / bitmax),
+                                    boneIndex = (int)m_BoneIndices_Unpacked[pos]
+                                };
+
+                                weightLevel += (int)weight;
+                                count++; pos++;
                             }
+
+                            //for (int i = 0; i < 4; i++)
+                            //{
+                            //    m_Skin[s].Add(new BoneInfluence()
+                            //    {
+                            //        weight = (float)((double)m_Weights_Unpacked[s * 4 + i] / bitmax),
+                            //        boneIndex = (int)m_BoneIndices_Unpacked[s * 4 + i]
+                            //    });
+                            //}
+
                         }
                     }
                     #endregion
