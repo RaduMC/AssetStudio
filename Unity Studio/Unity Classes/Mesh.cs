@@ -1077,7 +1077,6 @@ namespace Unity_Studio
                     m_BoneIndices.m_BitSize = a_Stream.ReadByte();
                     a_Stream.Position += 3; //4 byte alignment
 
-                    //how the hell does this work??
                     if (m_BoneIndices.m_NumItems > 0 && m_BoneIndices.m_NumItems == m_Weights.m_NumItems && (bool)Properties.Settings.Default["exportDeformers"])
                     {
                         uint[] m_Weights_Unpacked = UnpackBitVector(m_Weights);
@@ -1093,6 +1092,7 @@ namespace Unity_Studio
                         {
                             m_Skin[s] = new List<BoneInfluence>();
 
+                            // initialize bone influences for the vertex
                             m_Skin[s].Add(new BoneInfluence() { weight = 0, boneIndex = 0 });
                             m_Skin[s].Add(new BoneInfluence() { weight = 0, boneIndex = 0 });
                             m_Skin[s].Add(new BoneInfluence() { weight = 0, boneIndex = 0 });
@@ -1101,6 +1101,7 @@ namespace Unity_Studio
                             int weightLevel = 0;
                             int count = 0;
 
+                            // check if weight total == bitmax, else move to next vertex.
                             while (weightLevel < bitmax)
                             {
                                 if (pos + count > m_Weights_Unpacked.Length) break;
@@ -1115,16 +1116,6 @@ namespace Unity_Studio
                                 weightLevel += (int)weight;
                                 count++; pos++;
                             }
-
-                            //for (int i = 0; i < 4; i++)
-                            //{
-                            //    m_Skin[s].Add(new BoneInfluence()
-                            //    {
-                            //        weight = (float)((double)m_Weights_Unpacked[s * 4 + i] / bitmax),
-                            //        boneIndex = (int)m_BoneIndices_Unpacked[s * 4 + i]
-                            //    });
-                            //}
-
                         }
                     }
                     #endregion
