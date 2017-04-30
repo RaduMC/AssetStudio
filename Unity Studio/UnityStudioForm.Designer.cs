@@ -44,7 +44,8 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exportClassStructuresMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uniqueNames = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayOriginalName = new System.Windows.Forms.ToolStripMenuItem();
             this.enablePreview = new System.Windows.Forms.ToolStripMenuItem();
             this.displayInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.openAfterExport = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,6 +53,7 @@
             this.showExpOpt = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportAll3DMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.all3DObjectssplitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSelected3DMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exportAllAssetsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,6 +64,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.sceneTreeView = new GOHierarchy();
             this.treeSearch = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.assetListView = new System.Windows.Forms.ListView();
@@ -86,6 +89,7 @@
             this.FMODplayButton = new System.Windows.Forms.Button();
             this.fontPreviewBox = new System.Windows.Forms.RichTextBox();
             this.textPreviewBox = new System.Windows.Forms.TextBox();
+            this.glControl1 = new OpenTK.GLControl();
             this.classPreviewPanel = new System.Windows.Forms.Panel();
             this.classTextBox = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -95,12 +99,12 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.timerOpenTK = new System.Windows.Forms.Timer(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.openFolderDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.saveFolderDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.treeTip = new System.Windows.Forms.ToolTip(this.components);
-            this.sceneTreeView = new Unity_Studio.GOHierarchy();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -110,6 +114,7 @@
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.progressbarPanel.SuspendLayout();
+            this.glControl1.SuspendLayout();
             this.previewPanel.SuspendLayout();
             this.FMODpanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FMODprogressBar)).BeginInit();
@@ -228,7 +233,8 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.uniqueNames,
+            this.displayAll,
+            this.displayOriginalName,
             this.enablePreview,
             this.displayInfo,
             this.openAfterExport,
@@ -238,16 +244,24 @@
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
-            // uniqueNames
+            // displayOriginalName
             // 
-            this.uniqueNames.Checked = true;
-            this.uniqueNames.CheckOnClick = true;
-            this.uniqueNames.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.uniqueNames.Name = "uniqueNames";
-            this.uniqueNames.Size = new System.Drawing.Size(252, 22);
-            this.uniqueNames.Text = "Unique exported filenames";
-            this.uniqueNames.ToolTipText = resources.GetString("uniqueNames.ToolTipText");
-            this.uniqueNames.CheckedChanged += new System.EventHandler(this.MenuItem_CheckedChanged);
+            this.displayOriginalName.CheckOnClick = true;
+            this.displayOriginalName.Name = "displayOriginalName";
+            this.displayOriginalName.Size = new System.Drawing.Size(252, 22);
+            this.displayOriginalName.Text = "Display asset original name";
+            this.displayOriginalName.ToolTipText = "Check this option will use asset original name when display and export";
+            this.displayOriginalName.CheckedChanged += new System.EventHandler(this.MenuItem_CheckedChanged);
+            // 
+            // displayAll
+            // 
+            this.displayAll.CheckOnClick = true;
+            this.displayAll.Name = "displayAll";
+            this.displayAll.Size = new System.Drawing.Size(252, 22);
+            this.displayAll.Text = "Display all assets";
+            this.displayAll.ToolTipText = "Check this option will display all types assets. Not extractable assets can expor" +
+    "t the RAW file.";
+            this.displayAll.CheckedChanged += new System.EventHandler(this.MenuItem_CheckedChanged);
             // 
             // enablePreview
             // 
@@ -304,6 +318,7 @@
             // 
             this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exportAll3DMenuItem,
+            this.all3DObjectssplitToolStripMenuItem,
             this.exportSelected3DMenuItem,
             this.toolStripSeparator1,
             this.exportAllAssetsMenuItem,
@@ -316,40 +331,47 @@
             // exportAll3DMenuItem
             // 
             this.exportAll3DMenuItem.Name = "exportAll3DMenuItem";
-            this.exportAll3DMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.exportAll3DMenuItem.Size = new System.Drawing.Size(179, 22);
             this.exportAll3DMenuItem.Text = "All 3D objects";
             this.exportAll3DMenuItem.Click += new System.EventHandler(this.Export3DObjects_Click);
+            // 
+            // all3DObjectssplitToolStripMenuItem
+            // 
+            this.all3DObjectssplitToolStripMenuItem.Name = "all3DObjectssplitToolStripMenuItem";
+            this.all3DObjectssplitToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.all3DObjectssplitToolStripMenuItem.Text = "All 3D objects (split)";
+            this.all3DObjectssplitToolStripMenuItem.Click += new System.EventHandler(this.all3DObjectssplitToolStripMenuItem_Click);
             // 
             // exportSelected3DMenuItem
             // 
             this.exportSelected3DMenuItem.Name = "exportSelected3DMenuItem";
-            this.exportSelected3DMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.exportSelected3DMenuItem.Size = new System.Drawing.Size(179, 22);
             this.exportSelected3DMenuItem.Text = "Selected 3D objects";
             this.exportSelected3DMenuItem.Click += new System.EventHandler(this.Export3DObjects_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(176, 6);
             // 
             // exportAllAssetsMenuItem
             // 
             this.exportAllAssetsMenuItem.Name = "exportAllAssetsMenuItem";
-            this.exportAllAssetsMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.exportAllAssetsMenuItem.Size = new System.Drawing.Size(179, 22);
             this.exportAllAssetsMenuItem.Text = "All assets";
             this.exportAllAssetsMenuItem.Click += new System.EventHandler(this.ExportAssets_Click);
             // 
             // exportSelectedAssetsMenuItem
             // 
             this.exportSelectedAssetsMenuItem.Name = "exportSelectedAssetsMenuItem";
-            this.exportSelectedAssetsMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.exportSelectedAssetsMenuItem.Size = new System.Drawing.Size(179, 22);
             this.exportSelectedAssetsMenuItem.Text = "Selected assets";
             this.exportSelectedAssetsMenuItem.Click += new System.EventHandler(this.ExportAssets_Click);
             // 
             // exportFilteredAssetsMenuItem
             // 
             this.exportFilteredAssetsMenuItem.Name = "exportFilteredAssetsMenuItem";
-            this.exportFilteredAssetsMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.exportFilteredAssetsMenuItem.Size = new System.Drawing.Size(179, 22);
             this.exportFilteredAssetsMenuItem.Text = "Filtered assets";
             this.exportFilteredAssetsMenuItem.Click += new System.EventHandler(this.ExportAssets_Click);
             // 
@@ -387,7 +409,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.classPreviewPanel);
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
             this.splitContainer1.Panel2MinSize = 400;
-            this.splitContainer1.Size = new System.Drawing.Size(1264, 658);
+            this.splitContainer1.Size = new System.Drawing.Size(1264, 659);
             this.splitContainer1.SplitterDistance = 420;
             this.splitContainer1.TabIndex = 2;
             this.splitContainer1.TabStop = false;
@@ -401,7 +423,7 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(17, 3);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(418, 634);
+            this.tabControl1.Size = new System.Drawing.Size(418, 635);
             this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl1.TabIndex = 0;
             this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabPageSelected);
@@ -412,10 +434,21 @@
             this.tabPage1.Controls.Add(this.treeSearch);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(410, 608);
+            this.tabPage1.Size = new System.Drawing.Size(410, 557);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Scene Hierarchy";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // sceneTreeView
+            // 
+            this.sceneTreeView.CheckBoxes = true;
+            this.sceneTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sceneTreeView.HideSelection = false;
+            this.sceneTreeView.Location = new System.Drawing.Point(0, 21);
+            this.sceneTreeView.Name = "sceneTreeView";
+            this.sceneTreeView.Size = new System.Drawing.Size(410, 536);
+            this.sceneTreeView.TabIndex = 1;
+            this.sceneTreeView.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.sceneTreeView_AfterCheck);
             // 
             // treeSearch
             // 
@@ -438,7 +471,7 @@
             this.tabPage2.Controls.Add(this.listSearch);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(410, 608);
+            this.tabPage2.Size = new System.Drawing.Size(410, 609);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Asset List";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -457,7 +490,7 @@
             this.assetListView.LabelEdit = true;
             this.assetListView.Location = new System.Drawing.Point(0, 20);
             this.assetListView.Name = "assetListView";
-            this.assetListView.Size = new System.Drawing.Size(410, 588);
+            this.assetListView.Size = new System.Drawing.Size(410, 589);
             this.assetListView.TabIndex = 1;
             this.assetListView.UseCompatibleStateImageBehavior = false;
             this.assetListView.View = System.Windows.Forms.View.Details;
@@ -498,7 +531,7 @@
             // 
             this.progressbarPanel.Controls.Add(this.progressBar1);
             this.progressbarPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressbarPanel.Location = new System.Drawing.Point(0, 634);
+            this.progressbarPanel.Location = new System.Drawing.Point(0, 635);
             this.progressbarPanel.Name = "progressbarPanel";
             this.progressbarPanel.Padding = new System.Windows.Forms.Padding(1, 3, 1, 1);
             this.progressbarPanel.Size = new System.Drawing.Size(418, 22);
@@ -516,16 +549,17 @@
             // previewPanel
             // 
             this.previewPanel.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.previewPanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("previewPanel.BackgroundImage")));
+            this.previewPanel.BackgroundImage = global::Unity_Studio.Properties.Resources.preview;
             this.previewPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.previewPanel.Controls.Add(this.assetInfoLabel);
             this.previewPanel.Controls.Add(this.FMODpanel);
             this.previewPanel.Controls.Add(this.fontPreviewBox);
             this.previewPanel.Controls.Add(this.textPreviewBox);
+            this.previewPanel.Controls.Add(this.glControl1);
             this.previewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.previewPanel.Location = new System.Drawing.Point(0, 0);
             this.previewPanel.Name = "previewPanel";
-            this.previewPanel.Size = new System.Drawing.Size(838, 634);
+            this.previewPanel.Size = new System.Drawing.Size(838, 635);
             this.previewPanel.TabIndex = 1;
             // 
             // assetInfoLabel
@@ -552,9 +586,9 @@
             this.FMODpanel.Controls.Add(this.FMODstopButton);
             this.FMODpanel.Controls.Add(this.FMODpauseButton);
             this.FMODpanel.Controls.Add(this.FMODplayButton);
-            this.FMODpanel.Location = new System.Drawing.Point(220, 209);
+            this.FMODpanel.Location = new System.Drawing.Point(0, 0);
             this.FMODpanel.Name = "FMODpanel";
-            this.FMODpanel.Size = new System.Drawing.Size(400, 200);
+            this.FMODpanel.Size = new System.Drawing.Size(838, 635);
             this.FMODpanel.TabIndex = 2;
             this.FMODpanel.Visible = false;
             // 
@@ -562,7 +596,7 @@
             // 
             this.FMODcopyright.AutoSize = true;
             this.FMODcopyright.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.FMODcopyright.Location = new System.Drawing.Point(117, 187);
+            this.FMODcopyright.Location = new System.Drawing.Point(249, 380);
             this.FMODcopyright.Name = "FMODcopyright";
             this.FMODcopyright.Size = new System.Drawing.Size(283, 13);
             this.FMODcopyright.TabIndex = 9;
@@ -571,7 +605,7 @@
             // FMODinfoLabel
             // 
             this.FMODinfoLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.FMODinfoLabel.Location = new System.Drawing.Point(82, 54);
+            this.FMODinfoLabel.Location = new System.Drawing.Point(305, 271);
             this.FMODinfoLabel.Name = "FMODinfoLabel";
             this.FMODinfoLabel.Size = new System.Drawing.Size(176, 13);
             this.FMODinfoLabel.TabIndex = 8;
@@ -579,9 +613,9 @@
             // FMODtimerLabel
             // 
             this.FMODtimerLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.FMODtimerLabel.Location = new System.Drawing.Point(264, 54);
+            this.FMODtimerLabel.Location = new System.Drawing.Point(435, 271);
             this.FMODtimerLabel.Name = "FMODtimerLabel";
-            this.FMODtimerLabel.Size = new System.Drawing.Size(99, 13);
+            this.FMODtimerLabel.Size = new System.Drawing.Size(158, 13);
             this.FMODtimerLabel.TabIndex = 7;
             this.FMODtimerLabel.Text = "0:00.0 / 0:00.0";
             this.FMODtimerLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -589,7 +623,7 @@
             // FMODstatusLabel
             // 
             this.FMODstatusLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.FMODstatusLabel.Location = new System.Drawing.Point(26, 54);
+            this.FMODstatusLabel.Location = new System.Drawing.Point(249, 271);
             this.FMODstatusLabel.Name = "FMODstatusLabel";
             this.FMODstatusLabel.Size = new System.Drawing.Size(50, 13);
             this.FMODstatusLabel.TabIndex = 6;
@@ -598,7 +632,7 @@
             // FMODprogressBar
             // 
             this.FMODprogressBar.AutoSize = false;
-            this.FMODprogressBar.Location = new System.Drawing.Point(29, 73);
+            this.FMODprogressBar.Location = new System.Drawing.Point(252, 290);
             this.FMODprogressBar.Maximum = 1000;
             this.FMODprogressBar.Name = "FMODprogressBar";
             this.FMODprogressBar.Size = new System.Drawing.Size(348, 24);
@@ -611,7 +645,7 @@
             // FMODvolumeBar
             // 
             this.FMODvolumeBar.LargeChange = 2;
-            this.FMODvolumeBar.Location = new System.Drawing.Point(273, 103);
+            this.FMODvolumeBar.Location = new System.Drawing.Point(496, 320);
             this.FMODvolumeBar.Name = "FMODvolumeBar";
             this.FMODvolumeBar.Size = new System.Drawing.Size(104, 45);
             this.FMODvolumeBar.TabIndex = 4;
@@ -622,9 +656,9 @@
             // FMODloopButton
             // 
             this.FMODloopButton.Appearance = System.Windows.Forms.Appearance.Button;
-            this.FMODloopButton.Location = new System.Drawing.Point(212, 103);
+            this.FMODloopButton.Location = new System.Drawing.Point(435, 320);
             this.FMODloopButton.Name = "FMODloopButton";
-            this.FMODloopButton.Size = new System.Drawing.Size(55, 45);
+            this.FMODloopButton.Size = new System.Drawing.Size(55, 46);
             this.FMODloopButton.TabIndex = 3;
             this.FMODloopButton.Text = "Loop";
             this.FMODloopButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -633,9 +667,9 @@
             // 
             // FMODstopButton
             // 
-            this.FMODstopButton.Location = new System.Drawing.Point(151, 103);
+            this.FMODstopButton.Location = new System.Drawing.Point(374, 320);
             this.FMODstopButton.Name = "FMODstopButton";
-            this.FMODstopButton.Size = new System.Drawing.Size(55, 45);
+            this.FMODstopButton.Size = new System.Drawing.Size(55, 46);
             this.FMODstopButton.TabIndex = 2;
             this.FMODstopButton.Text = "Stop";
             this.FMODstopButton.UseVisualStyleBackColor = true;
@@ -643,9 +677,9 @@
             // 
             // FMODpauseButton
             // 
-            this.FMODpauseButton.Location = new System.Drawing.Point(90, 103);
+            this.FMODpauseButton.Location = new System.Drawing.Point(313, 320);
             this.FMODpauseButton.Name = "FMODpauseButton";
-            this.FMODpauseButton.Size = new System.Drawing.Size(55, 45);
+            this.FMODpauseButton.Size = new System.Drawing.Size(55, 46);
             this.FMODpauseButton.TabIndex = 1;
             this.FMODpauseButton.Text = "Pause";
             this.FMODpauseButton.UseVisualStyleBackColor = true;
@@ -653,9 +687,9 @@
             // 
             // FMODplayButton
             // 
-            this.FMODplayButton.Location = new System.Drawing.Point(29, 103);
+            this.FMODplayButton.Location = new System.Drawing.Point(252, 320);
             this.FMODplayButton.Name = "FMODplayButton";
-            this.FMODplayButton.Size = new System.Drawing.Size(55, 45);
+            this.FMODplayButton.Size = new System.Drawing.Size(55, 46);
             this.FMODplayButton.TabIndex = 0;
             this.FMODplayButton.Text = "Play";
             this.FMODplayButton.UseVisualStyleBackColor = true;
@@ -669,7 +703,7 @@
             this.fontPreviewBox.Name = "fontPreviewBox";
             this.fontPreviewBox.ReadOnly = true;
             this.fontPreviewBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.fontPreviewBox.Size = new System.Drawing.Size(838, 634);
+            this.fontPreviewBox.Size = new System.Drawing.Size(838, 635);
             this.fontPreviewBox.TabIndex = 0;
             this.fontPreviewBox.Text = resources.GetString("fontPreviewBox.Text");
             this.fontPreviewBox.Visible = false;
@@ -684,10 +718,21 @@
             this.textPreviewBox.Name = "textPreviewBox";
             this.textPreviewBox.ReadOnly = true;
             this.textPreviewBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textPreviewBox.Size = new System.Drawing.Size(838, 634);
+            this.textPreviewBox.Size = new System.Drawing.Size(838, 635);
             this.textPreviewBox.TabIndex = 2;
             this.textPreviewBox.Visible = false;
             this.textPreviewBox.WordWrap = false;
+            // 
+            // glControl1
+            // 
+            this.glControl1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.glControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.glControl1.Location = new System.Drawing.Point(0, 0);
+            this.glControl1.Name = "glControl1";
+            this.glControl1.Size = new System.Drawing.Size(838, 635);
+            this.glControl1.TabIndex = 4;
+            this.glControl1.VSync = false;
+            this.glControl1.Paint += new System.Windows.Forms.PaintEventHandler(this.glControl1_Paint);
             // 
             // classPreviewPanel
             // 
@@ -695,7 +740,7 @@
             this.classPreviewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.classPreviewPanel.Location = new System.Drawing.Point(0, 0);
             this.classPreviewPanel.Name = "classPreviewPanel";
-            this.classPreviewPanel.Size = new System.Drawing.Size(838, 634);
+            this.classPreviewPanel.Size = new System.Drawing.Size(838, 635);
             this.classPreviewPanel.TabIndex = 3;
             this.classPreviewPanel.Visible = false;
             // 
@@ -707,7 +752,7 @@
             this.classTextBox.Name = "classTextBox";
             this.classTextBox.ReadOnly = true;
             this.classTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.classTextBox.Size = new System.Drawing.Size(838, 634);
+            this.classTextBox.Size = new System.Drawing.Size(838, 635);
             this.classTextBox.TabIndex = 3;
             this.classTextBox.WordWrap = false;
             // 
@@ -715,7 +760,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 634);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 635);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(838, 22);
             this.statusStrip1.TabIndex = 2;
@@ -771,12 +816,16 @@
             // 
             this.timer.Interval = 10;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            //
+            // timerOpenTK
+            //
+            this.timerOpenTK.Interval = 1000 / 6;
+            this.timerOpenTK.Tick += new System.EventHandler(this.timerOpenTK_Tick);
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.Filter = "Unity asset files|level*; mainData; CustomAssetBundle-*; CAB-*; BuildPlayer-*; *." +
-    "assets; *.sharedAssets|Unity bundle files|*.unity3d; *.unity3d.lz4; *.assetbundl" +
-    "e; *.bundle; *.bytes";
+            this.openFileDialog1.AddExtension = false;
+            this.openFileDialog1.Filter = resources.GetString("openFileDialog1.Filter");
             this.openFileDialog1.Multiselect = true;
             this.openFileDialog1.RestoreDirectory = true;
             // 
@@ -802,31 +851,20 @@
             this.saveFolderDialog1.RestoreDirectory = true;
             this.saveFolderDialog1.Title = "Browse for folder";
             // 
-            // sceneTreeView
-            // 
-            this.sceneTreeView.CheckBoxes = true;
-            this.sceneTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sceneTreeView.HideSelection = false;
-            this.sceneTreeView.Location = new System.Drawing.Point(0, 20);
-            this.sceneTreeView.Name = "sceneTreeView";
-            this.sceneTreeView.Size = new System.Drawing.Size(410, 588);
-            this.sceneTreeView.TabIndex = 1;
-            this.sceneTreeView.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.sceneTreeView_AfterCheck);
-            // 
             // UnityStudioForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 682);
+            this.ClientSize = new System.Drawing.Size(1264, 683);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::Unity_Studio.Properties.Resources.unity;
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(620, 400);
             this.Name = "UnityStudioForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Unity Studio";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UnityStudioForm_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.UnityStudioForm_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -841,6 +879,7 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.progressbarPanel.ResumeLayout(false);
+            this.glControl1.ResumeLayout(false);
             this.previewPanel.ResumeLayout(false);
             this.previewPanel.PerformLayout();
             this.FMODpanel.ResumeLayout(false);
@@ -897,9 +936,11 @@
         private System.Windows.Forms.Label FMODtimerLabel;
         private System.Windows.Forms.Label FMODinfoLabel;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.Timer timerOpenTK;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem uniqueNames;
+        private System.Windows.Forms.ToolStripMenuItem displayAll;
+        private System.Windows.Forms.ToolStripMenuItem displayOriginalName;
         private System.Windows.Forms.ToolStripMenuItem enablePreview;
         private System.Windows.Forms.ToolStripMenuItem displayInfo;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
@@ -930,6 +971,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem exportClassStructuresMenuItem;
         private System.Windows.Forms.Label FMODcopyright;
+        private System.Windows.Forms.ToolStripMenuItem all3DObjectssplitToolStripMenuItem;
+        private OpenTK.GLControl glControl1;
     }
 }
 
