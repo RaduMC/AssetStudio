@@ -1107,11 +1107,8 @@ namespace Unity_Studio
                                 if (pos + count > m_Weights_Unpacked.Length) break;
 
                                 var weight = m_Weights_Unpacked[pos];
-                                m_Skin[s][count] = new BoneInfluence()
-                                {
-                                    weight = (float)((double)weight / bitmax),
-                                    boneIndex = (int)m_BoneIndices_Unpacked[pos]
-                                };
+                                m_Skin[s][count].weight = (float)((double)weight / bitmax);
+                                m_Skin[s][count].boneIndex = (int)m_BoneIndices_Unpacked[pos];
 
                                 weightLevel += (int)weight;
                                 count++; pos++;
