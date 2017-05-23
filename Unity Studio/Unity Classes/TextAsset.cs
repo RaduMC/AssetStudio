@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Unity_Studio
@@ -34,25 +35,25 @@ namespace Unity_Studio
                 m_Script = new byte[m_Script_size];
                 a_Stream.Read(m_Script, 0, m_Script_size);
 
-                if (m_Script[0] == 93) { m_Script = SevenZip.Compression.LZMA.SevenZipHelper.Decompress(m_Script); }
+                if (m_Script[0] == 93)
+                {
+                    try
+                    {
+                        m_Script = SevenZip.Compression.LZMA.SevenZipHelper.Decompress(m_Script);
+                    }
+                    catch { }
+                }
                 if (m_Script[0] == 60 || (m_Script[0] == 239 && m_Script[1] == 187 && m_Script[2] == 191 && m_Script[3] == 60)) { preloadData.extension = ".xml"; }
             }
             else
             {
                 byte lzmaTest = a_Stream.ReadByte();
-                if (lzmaTest == 93)
-                {
-                    a_Stream.Position += 4;
-                    preloadData.exportSize = a_Stream.ReadInt32(); //actualy int64
-                    a_Stream.Position -= 8;
-                }
-                else { preloadData.exportSize = m_Script_size; }
 
                 a_Stream.Position += m_Script_size - 1;
 
                 if (m_Name != "") { preloadData.Text = m_Name; }
                 else { preloadData.Text = preloadData.TypeString + " #" + preloadData.uniqueID; }
-                preloadData.SubItems.AddRange(new string[] { preloadData.TypeString, preloadData.exportSize.ToString() });
+                preloadData.SubItems.AddRange(new[] { preloadData.TypeString, preloadData.Size.ToString() });
             }
             a_Stream.AlignStream(4);
 
