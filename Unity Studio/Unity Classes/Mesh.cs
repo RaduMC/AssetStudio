@@ -1077,7 +1077,7 @@ namespace Unity_Studio
                     m_BoneIndices.m_BitSize = a_Stream.ReadByte();
                     a_Stream.Position += 3; //4 byte alignment
 
-                    if (m_BoneIndices.m_NumItems > 0 && m_BoneIndices.m_NumItems == m_Weights.m_NumItems && (bool)Properties.Settings.Default["exportDeformers"])
+                    if (m_BoneIndices.m_NumItems > 0 && (bool)Properties.Settings.Default["exportDeformers"])
                     {
                         uint[] m_Weights_Unpacked = UnpackBitVector(m_Weights);
                         int bitmax = 0;
@@ -1087,7 +1087,8 @@ namespace Unity_Studio
 
                         m_Skin = new List<BoneInfluence>[m_Vertices.Length / 3];
 
-                        int pos = 0;
+                        int weightPos = 0;
+                        int bonePos = 0;
                         for (int s = 0; s < m_Skin.Length; s++)
                         {
                             m_Skin[s] = new List<BoneInfluence>();
@@ -1104,14 +1105,22 @@ namespace Unity_Studio
                             // check if weight total == bitmax, else move to next vertex.
                             while (weightLevel < bitmax)
                             {
-                                if (pos + count > m_Weights_Unpacked.Length) break;
+                                if (weightPos + count > m_Weights_Unpacked.Length && bonePos + count > m_Weights_Unpacked.Length) break;
 
-                                var weight = m_Weights_Unpacked[pos];
-                                m_Skin[s][count].weight = (float)((double)weight / bitmax);
-                                m_Skin[s][count].boneIndex = (int)m_BoneIndices_Unpacked[pos];
-
+                                var weight = m_Weights_Unpacked[weightPos];
                                 weightLevel += (int)weight;
-                                count++; pos++;
+
+                                if (weightLevel > bitmax) {
+                                    m_Skin[s][count].weight = (float)((double)(weightLevel - bitmax) / bitmax);
+                                    m_Skin[s][count].boneIndex = (int)m_BoneIndices_Unpacked[bonePos];
+                                    bonePos++;
+                                    break;
+                                };
+
+                                m_Skin[s][count].weight = (float)((double)weight / bitmax);
+                                m_Skin[s][count].boneIndex = (int)m_BoneIndices_Unpacked[bonePos];
+
+                                count++; weightPos++; bonePos++;
                             }
                         }
                     }
