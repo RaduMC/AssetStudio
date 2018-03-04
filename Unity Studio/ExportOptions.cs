@@ -12,8 +12,6 @@ namespace Unity_Studio
 {
     public partial class ExportOptions : Form
     {
-        public string selectedPath = "";
-
         public ExportOptions()
         {
             InitializeComponent();
@@ -27,6 +25,17 @@ namespace Unity_Studio
             scaleFactor.Value = (decimal)Properties.Settings.Default["scaleFactor"];
             upAxis.SelectedIndex = (int)Properties.Settings.Default["upAxis"];
             showExpOpt.Checked = (bool)Properties.Settings.Default["showExpOpt"];
+            converttexture.Checked = (bool)Properties.Settings.Default["convertTexture"];
+            convertAudio.Checked = (bool)Properties.Settings.Default["convertAudio"];
+            var str = (string)Properties.Settings.Default["convertType"];
+            foreach (Control c in panel1.Controls)
+            {
+                if (c.Text == str)
+                {
+                    ((RadioButton)c).Checked = true;
+                    break;
+                }
+            }
         }
 
         private void exportOpnions_CheckedChanged(object sender, EventArgs e)
@@ -44,14 +53,25 @@ namespace Unity_Studio
             Properties.Settings.Default["exportDeformers"] = exportDeformers.Checked;
             Properties.Settings.Default["scaleFactor"] = scaleFactor.Value;
             Properties.Settings.Default["upAxis"] = upAxis.SelectedIndex;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            Properties.Settings.Default["convertTexture"] = converttexture.Checked;
+            Properties.Settings.Default["convertAudio"] = convertAudio.Checked;
+            foreach (Control c in panel1.Controls)
+            {
+                if (((RadioButton)c).Checked)
+                {
+                    Properties.Settings.Default["convertType"] = c.Text;
+                    break;
+                }
+            }
+            Properties.Settings.Default.Save();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void fbxCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void exportDeformers_CheckedChanged(object sender, EventArgs e)

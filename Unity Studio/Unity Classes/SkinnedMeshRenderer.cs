@@ -21,12 +21,11 @@ namespace Unity_Studio
         {
             var sourceFile = preloadData.sourceFile;
             var version = preloadData.sourceFile.version;
-            var a_Stream = preloadData.sourceFile.a_Stream;
-            a_Stream.Position = preloadData.Offset;
+            var reader = preloadData.Reader;
 
             if (sourceFile.platform == -2)
             {
-                uint m_ObjectHideFlags = a_Stream.ReadUInt32();
+                uint m_ObjectHideFlags = reader.ReadUInt32();
                 PPtr m_PrefabParentObject = sourceFile.ReadPPtr();
                 PPtr m_PrefabInternal = sourceFile.ReadPPtr();
             }
@@ -34,62 +33,77 @@ namespace Unity_Studio
             m_GameObject = sourceFile.ReadPPtr();
             if (sourceFile.version[0] < 5)
             {
-                m_Enabled = a_Stream.ReadBoolean();
-                m_CastShadows = a_Stream.ReadByte();//bool
-                m_ReceiveShadows = a_Stream.ReadBoolean();
-                m_LightmapIndex = a_Stream.ReadByte();
+                m_Enabled = reader.ReadBoolean();
+                m_CastShadows = reader.ReadByte();//bool
+                m_ReceiveShadows = reader.ReadBoolean();
+                m_LightmapIndex = reader.ReadByte();
             }
             else
             {
-                m_Enabled = a_Stream.ReadBoolean();
-                a_Stream.AlignStream(4);
-                m_CastShadows = a_Stream.ReadByte();
-                m_ReceiveShadows = a_Stream.ReadBoolean();
-                a_Stream.AlignStream(4);
+                m_Enabled = reader.ReadBoolean();
+                reader.AlignStream(4);
+                m_CastShadows = reader.ReadByte();
+                m_ReceiveShadows = reader.ReadBoolean();
+                reader.AlignStream(4);
 
-                m_LightmapIndex = a_Stream.ReadUInt16();
-                m_LightmapIndexDynamic = a_Stream.ReadUInt16();
+                m_LightmapIndex = reader.ReadUInt16();
+                m_LightmapIndexDynamic = reader.ReadUInt16();
             }
 
-            if (version[0] >= 3) { a_Stream.Position += 16; } //m_LightmapTilingOffset vector4d
-            if (sourceFile.version[0] >= 5) { a_Stream.Position += 16; } //Vector4f m_LightmapTilingOffsetDynamic
+            if (version[0] >= 3) { reader.Position += 16; } //m_LightmapTilingOffset vector4d
+            if (sourceFile.version[0] >= 5) { reader.Position += 16; } //Vector4f m_LightmapTilingOffsetDynamic
 
-            m_Materials = new PPtr[a_Stream.ReadInt32()];
+            m_Materials = new PPtr[reader.ReadInt32()];
             for (int m = 0; m < m_Materials.Length; m++)
             {
                 m_Materials[m] = sourceFile.ReadPPtr();
             }
 
-            if (version[0] < 3) { a_Stream.Position += 16; } //m_LightmapTilingOffset vector4d
+            if (version[0] < 3)
+            {
+                reader.Position += 16;//m_LightmapTilingOffset vector4d
+            }
             else
             {
-                int m_SubsetIndices_size = a_Stream.ReadInt32();
-                a_Stream.Position += m_SubsetIndices_size * 4;
+                if ((sourceFile.version[0] == 5 && sourceFile.version[1] >= 5) || sourceFile.version[0] > 5)//5.5.0 and up
+                {
+                    reader.Position += 4;//m_StaticBatchInfo
+                }
+                else
+                {
+                    int m_SubsetIndices_size = reader.ReadInt32();
+                    reader.Position += m_SubsetIndices_size * 4;
+                }
                 PPtr m_StaticBatchRoot = sourceFile.ReadPPtr();
 
-                if (version[0] >= 4 || (version[0] == 3 && version[1] >= 5))
+                if ((sourceFile.version[0] == 5 && sourceFile.version[1] >= 4) || sourceFile.version[0] > 5)//5.4.0 and up
                 {
-                    bool m_UseLightProbes = a_Stream.ReadBoolean();
-                    a_Stream.Position += 3; //alignment
-                    if (version[0] == 5) { int m_ReflectionProbeUsage = a_Stream.ReadInt32(); }
+                    PPtr m_ProbeAnchor = sourceFile.ReadPPtr();
+                    PPtr m_LightProbeVolumeOverride = sourceFile.ReadPPtr();
+                }
+                else if (version[0] >= 4 || (version[0] == 3 && version[1] >= 5))
+                {
+                    bool m_UseLightProbes = reader.ReadBoolean();
+                    reader.Position += 3; //alignment
+                    if (version[0] == 5) { int m_ReflectionProbeUsage = reader.ReadInt32(); }
                     //did I ever check if the anchor is conditioned by the bool?
                     PPtr m_LightProbeAnchor = sourceFile.ReadPPtr();
                 }
 
                 if (version[0] >= 5 || (version[0] == 4 && version[1] >= 3))
                 {
-                    if (version[0] == 4 && version[1] <= 3) { int m_SortingLayer = a_Stream.ReadInt16(); }
-                    else { int m_SortingLayer = a_Stream.ReadInt32(); }
-                    
-                    int m_SortingOrder = a_Stream.ReadInt16();
-                    a_Stream.AlignStream(4);
+                    if (version[0] == 4 && version[1] <= 3) { int m_SortingLayer = reader.ReadInt16(); }
+                    else { int m_SortingLayer = reader.ReadInt32(); }
+
+                    int m_SortingOrder = reader.ReadInt16();
+                    reader.AlignStream(4);
                 }
             }
 
-            int m_Quality = a_Stream.ReadInt32();
-            bool m_UpdateWhenOffscreen = a_Stream.ReadBoolean();
-            bool m_SkinNormals = a_Stream.ReadBoolean(); //3.1.0 and below
-            a_Stream.Position += 2;
+            int m_Quality = reader.ReadInt32();
+            bool m_UpdateWhenOffscreen = reader.ReadBoolean();
+            bool m_SkinNormals = reader.ReadBoolean(); //3.1.0 and below
+            reader.Position += 2;
 
             if (version[0] == 2 && version[1] < 6)
             {
@@ -99,7 +113,7 @@ namespace Unity_Studio
 
             m_Mesh = sourceFile.ReadPPtr();
 
-            m_Bones = new PPtr[a_Stream.ReadInt32()];
+            m_Bones = new PPtr[reader.ReadInt32()];
             for (int b = 0; b < m_Bones.Length; b++)
             {
                 m_Bones[b] = sourceFile.ReadPPtr();
@@ -107,28 +121,28 @@ namespace Unity_Studio
 
             if (version[0] < 3)
             {
-                int m_BindPose = a_Stream.ReadInt32();
-                a_Stream.Position += m_BindPose * 16 * 4;//Matrix4x4f
+                int m_BindPose = reader.ReadInt32();
+                reader.Position += m_BindPose * 16 * 4;//Matrix4x4f
             }
             else
             {
-                if (version[0] >= 4 || (version[0] == 4 && version[1] >= 3))
+                if (version[0] > 4 || (version[0] == 4 && version[1] >= 3))
                 {
-                    int m_BlendShapeWeights = a_Stream.ReadInt32();
-                    a_Stream.Position += m_BlendShapeWeights * 4; //floats
+                    int m_BlendShapeWeights = reader.ReadInt32();
+                    reader.Position += m_BlendShapeWeights * 4; //floats
                 }
 
-                if (version[0] >= 4 || (version[0] >= 3 && version[1] >= 5))
+                if (version[0] > 4 || (version[0] >= 3 && version[1] >= 5))
                 {
                     PPtr m_RootBone = sourceFile.ReadPPtr();
                 }
 
-                if (version[0] >= 4 || (version[0] == 3 && version[1] >= 4))
+                if (version[0] > 4 || (version[0] == 3 && version[1] >= 4))
                 {
                     //AABB
-                    float[] m_Center = new float[] { a_Stream.ReadSingle(), a_Stream.ReadSingle(), a_Stream.ReadSingle() };
-                    float[] m_Extent = new float[] { a_Stream.ReadSingle(), a_Stream.ReadSingle(), a_Stream.ReadSingle() };
-                    bool m_DirtyAABB = a_Stream.ReadBoolean();
+                    float[] m_Center = { reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() };
+                    float[] m_Extent = { reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() };
+                    bool m_DirtyAABB = reader.ReadBoolean();
                 }
             }
         }
