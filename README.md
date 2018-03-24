@@ -1,6 +1,9 @@
-**Unity Studio** is a tool for exploring, extracting and exporting assets from Unity games and apps.
+**UnityStudio** is an independent tool for exploring, extracting and exporting assets.
 
-It is the continuation of my Unity Importer script for 3ds Max, and comprises all my research and reverse engineering of Unity file formats. It has been thoroughly tested with Unity builds from most platforms, ranging from Web, PC, Linux, MacOS to Xbox360, PS3, Android and iOS, and it is currently maintained to be compatible with Unity builds from 2.5.0 up to the latest version.
+**None of the repo, the tool, nor the repo owner is affiliated with, or sponsored or authorized by, Unity Technologies or its affiliates.**
+
+It is the continuation of my Importer script for 3ds Max, and comprises all my research and reverse engineering file formats. It has been thoroughly tested with builds from most platforms, ranging from Web, PC, Linux, MacOS to Xbox360, PS3, Android and iOS.
+This project is no longer maintained and is probably not compatible with recent builds.
 
 #### Current features
 
@@ -25,6 +28,16 @@ It is the continuation of my Unity Importer script for 3ds Max, and comprises al
 | Scene Hierarchy search box    | Search nodes using * and ? wildcards. Press Enter to loop through results or Ctrl+Enter to select all matching nodes
 | Asset List filter box         | Enter a keyword to filter the list of available assets; wildcards are added automatically
 | Diagnostics                   | press Ctrl+Alt+D to bring up a hidden menu and a new list
-| Bulid class structures        | Create human-readable structures for each type of Unity asset; available only in Web builds!
+| Bulid class structures        | Create human-readable structures for each type of asset; available only in Web builds!
 
 Other interface elements have tooltips or are self-explanatory.
+
+
+
+#### DISCLAIMER
+The reposiotory, code and tools provided herein are for educational purposes only.
+The information not meant to change or impact the original code, product or service.
+Use of this repository, code or tools does not exempt the user from any EULA, ToS or any other legal agreements that have been agreed with other parties.
+The user of this repository, code and tools is responsible for his own actions.
+
+Any forks, clones or copies of this repository are the responsability of their respective authors and users.
