@@ -1,4 +1,4 @@
-**UnityStudio** is an independent tool for exploring, extracting and exporting assets.
+**AssetStudio** is an independent tool for exploring, extracting and exporting assets.
 
 **None of the repo, the tool, nor the repo owner is affiliated with, or sponsored or authorized by, Unity Technologies or its affiliates.**
 
