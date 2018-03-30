@@ -2,6 +2,8 @@
 
 **None of the repo, the tool, nor the repo owner is affiliated with, or sponsored or authorized by, Unity Technologies or its affiliates.**
 
+**This project is no longer maintained. Thank you all for your feedback and testing.**
+
 It is the continuation of my Importer script for 3ds Max, and comprises all my research and reverse engineering file formats. It has been thoroughly tested with builds from most platforms, ranging from Web, PC, Linux, MacOS to Xbox360, PS3, Android and iOS.
 This project is no longer maintained and is probably not compatible with recent builds.
 
